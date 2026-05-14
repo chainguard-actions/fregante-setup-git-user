@@ -1,0 +1,10 @@
+name: Setup GIT user
+description: GitHub Action that sets the git user and email to enable commiting
+author: Federico Brigante
+branding:
+  icon: chevron-up
+  color: yellow
+
+runs:
+  using: node16
+  main: index.js
