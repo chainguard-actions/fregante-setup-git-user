@@ -10,7 +10,7 @@ Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at
 |---------|-----|-----------------|
 | v1.1.0 | [`v1.1.0`](https://github.com/chainguard-actions/fregante-setup-git-user/tree/v1.1.0) | — |
 | v2.0.1 | [`v2.0.1`](https://github.com/chainguard-actions/fregante-setup-git-user/tree/v2.0.1) | — |
-| v2.0.2 | [`v2.0.2`](https://github.com/chainguard-actions/fregante-setup-git-user/tree/v2.0.2) | — |
+| v2.0.2 | [`v2.0.2`](https://github.com/chainguard-actions/fregante-setup-git-user/tree/v2.0.2) | [`024bc0b`](https://github.com/fregante/setup-git-user/commit/024bc0b8e177d7e77203b48dab6fb45666854b35) |
 
 ## Privacy
 
