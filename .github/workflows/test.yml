@@ -1,0 +1,20 @@
+name: CI
+on: push
+
+permissions:
+  contents: write
+
+jobs:
+  Test:
+    name: Live Action Test
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' }}
+    steps:
+      - uses: actions/checkout@a37ce9120846195fa4ece8f58b268e6043cb2f26 # v3
+      - name: Run Action
+        uses: ./
+      - name: Test the action by creating and deleting a commit
+        run: |
+          git commit --allow-empty --message 'git test'
+          git push origin HEAD:testing-branch
+          git push --delete origin testing-branch
