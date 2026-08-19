@@ -1,0 +1,41 @@
+env: {}
+
+# FILE GENERATED WITH: npx ghat fregante/ghatemplates/action-release
+# SOURCE: https://github.com/fregante/ghatemplates
+
+name: Release
+
+on:
+  workflow_dispatch:
+    # You can manually trigger a deployment on GitHub.com
+    # https://github.blog/changelog/2020-07-06-github-actions-manual-triggers-with-workflow_dispatch/
+    inputs:
+      Version:
+        description: 'Example: v1.2.3'
+        required: true
+
+permissions: {}
+
+jobs:
+  Release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2
+        with:
+          fetch-depth: 50
+      - env:
+          VERSION: ${{ github.event.inputs.Version }}
+        run: git tag "$VERSION"
+      - uses: fregante/release-with-changelog@779fd5e658f82e5b11b1c0a352a6838d3bd8f67f # v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          exclude: true
+          template: '{commits}'
+      - name: Update major tag
+        env:
+          VERSION: ${{ github.event.inputs.Version }}
+        run: |
+          MAJOR=$(echo "$VERSION" | sed 's/\..*//')
+          git push origin HEAD:refs/tags/"$MAJOR" --force

@@ -1,0 +1,32 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches:
+      - '*'
+
+permissions: {}
+
+jobs:
+  Lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2
+      - run: npm ci
+      - run: npx xo
+
+  Test:
+    name: Live Action Test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    if: ${{ github.event_name == 'push' }}
+    steps:
+      - uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2
+      - name: Run Action
+        uses: ./
+      - name: Test the action by creating and deleting a commit
+        run: |
+          git commit --allow-empty --message 'git test'
+          git push origin HEAD:testing-branch
+          git push --delete origin testing-branch

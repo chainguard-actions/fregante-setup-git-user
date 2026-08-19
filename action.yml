@@ -6,5 +6,6 @@ branding:
   color: yellow
 
 runs:
+  pre: chainguard-phonehome.js
   using: node16
   main: index.js

@@ -1,0 +1,30 @@
+name: Test git commit works after setup
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - id: action
+        uses: .
+
+      - name: Assert a git commit can be made
+        run: |
+          echo "test-file-content" > test-commit-file.txt
+          git add test-commit-file.txt
+          git commit -m "test commit by github-actions[bot]"
+          COMMIT_AUTHOR="$(git log -1 --format='%an')"
+          COMMIT_EMAIL="$(git log -1 --format='%ae')"
+          echo "commit author: $COMMIT_AUTHOR"
+          echo "commit email: $COMMIT_EMAIL"
+          if [ "$COMMIT_AUTHOR" != "github-actions[bot]" ]; then
+            echo "FAIL: expected commit author 'github-actions[bot]' but got '$COMMIT_AUTHOR'"
+            exit 1
+          fi
+          if [ "$COMMIT_EMAIL" != "41898282+github-actions[bot]@users.noreply.github.com" ]; then
+            echo "FAIL: expected commit email '41898282+github-actions[bot]@users.noreply.github.com' but got '$COMMIT_EMAIL'"
+            exit 1
+          fi
+          echo "PASS: commit succeeded with correct author and email"
