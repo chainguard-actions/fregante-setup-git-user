@@ -1,0 +1,33 @@
+name: Test that commits work after setup
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+      - name: Assert a commit can be created
+        run: |
+          # Create a test file and commit it to verify git config is functional
+          echo "test" > test-commit-file.txt
+          git add test-commit-file.txt
+          git commit -m "Test commit from GitHub Actions"
+          echo "PASS: commit succeeded"
+      - name: Assert commit author is correct
+        run: |
+          AUTHOR_NAME="$(git log -1 --format='%an')"
+          AUTHOR_EMAIL="$(git log -1 --format='%ae')"
+          echo "commit author name: $AUTHOR_NAME"
+          echo "commit author email: $AUTHOR_EMAIL"
+          if [ "$AUTHOR_NAME" != "GitHub Actions" ]; then
+            echo "FAIL: expected author name 'GitHub Actions' but got '$AUTHOR_NAME'"
+            exit 1
+          fi
+          EXPECTED_EMAIL="41898282+github-actions[bot]@users.noreply.github.com"
+          if [ "$AUTHOR_EMAIL" != "$EXPECTED_EMAIL" ]; then
+            echo "FAIL: expected author email '$EXPECTED_EMAIL' but got '$AUTHOR_EMAIL'"
+            exit 1
+          fi
+          echo "PASS: commit author is correct"

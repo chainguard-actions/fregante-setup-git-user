@@ -1,0 +1,29 @@
+name: Test basic git user setup
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+      - name: Assert git user.name is set
+        run: |
+          ACTUAL="$(git config user.name)"
+          echo "actual user.name: $ACTUAL"
+          if [ "$ACTUAL" != "GitHub Actions" ]; then
+            echo "FAIL: expected 'GitHub Actions' but got '$ACTUAL'"
+            exit 1
+          fi
+          echo "PASS: user.name is 'GitHub Actions'"
+      - name: Assert git user.email is set
+        run: |
+          ACTUAL="$(git config user.email)"
+          echo "actual user.email: $ACTUAL"
+          EXPECTED="41898282+github-actions[bot]@users.noreply.github.com"
+          if [ "$ACTUAL" != "$EXPECTED" ]; then
+            echo "FAIL: expected '$EXPECTED' but got '$ACTUAL'"
+            exit 1
+          fi
+          echo "PASS: user.email is '$EXPECTED'"
