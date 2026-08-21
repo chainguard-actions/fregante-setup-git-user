@@ -1,0 +1,36 @@
+name: Test git commit after setup
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+      - name: Assert a git commit can be made with the configured identity
+        run: |
+          # Create a test file and commit it to verify the git identity works
+          echo "test" > /tmp/test-commit-file.txt
+          git add /tmp/test-commit-file.txt 2>/dev/null || true
+          # Use a temp repo to avoid polluting the workspace
+          TMPDIR="$(mktemp -d)"
+          cd "$TMPDIR"
+          git init
+          echo "test content" > test.txt
+          git add test.txt
+          git commit -m "Test commit"
+          COMMIT_AUTHOR="$(git log --format='%an' -1)"
+          COMMIT_EMAIL="$(git log --format='%ae' -1)"
+          echo "commit author: $COMMIT_AUTHOR"
+          echo "commit email: $COMMIT_EMAIL"
+          if [ "$COMMIT_AUTHOR" != "GitHub Actions" ]; then
+            echo "FAIL: expected commit author 'GitHub Actions' but got '$COMMIT_AUTHOR'"
+            exit 1
+          fi
+          EXPECTED_EMAIL="41898282+github-actions[bot]@users.noreply.github.com"
+          if [ "$COMMIT_EMAIL" != "$EXPECTED_EMAIL" ]; then
+            echo "FAIL: expected commit email '$EXPECTED_EMAIL' but got '$COMMIT_EMAIL'"
+            exit 1
+          fi
+          echo "PASS: git commit succeeded with correct identity"
