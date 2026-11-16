@@ -4,6 +4,7 @@ author: Federico Brigante
 branding:
   icon: chevron-up
   color: yellow
+
 runs:
   using: composite
   steps:
